@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package featuresdb;
+
+service FeaturesDbService {
+    // Adds one or more features along with the labels in the Features Db
+    rpc AddItems(FeatureItems) returns (ReqStatus) {}
+
+    // Removes one or more features from the DB based on the labels 
+    rpc RemoveItems(LabelList) returns (ReqStatus) {}
+
+    // Update label of an existing item in the DB 
+    rpc UpdateLabels(LabelList) returns (ReqStatus) {}
+
+    // Queries k top results of the given feature vectors
+    rpc QueryIndex(IndexQuery) returns (QueryResult) {}
+
+    // Returns the current size of the Db
+    rpc GetDbSize(Empty) returns (DbSize) {}
+
+    // Returns list of labels currently added in the DB
+    rpc GetDbList(Empty) returns (LabelList) {}
+
+    // Asks the Features DB to create a backup on FileSystem
+    rpc CreateBackup(Empty) returns (ReqStatus) {}
+
+    // Asks the Features DB to create a new DB with name db_name or select if file already exists
+    rpc CreateNewDB(FileName) returns (ReqStatus) {}
+
+    // Upload DB file contents and use it
+    rpc UploadDB(stream FileChunk) returns (ReqStatus) {}
+
+
+}
+
+// Contains the indexes, scores and labels of the k top matches for each query
+// Feature vector.
+message QueryResult {
+    repeated uint32 indexes = 1;
+    repeated float scores = 2;
+    repeated string labels = 3;
+}
+
+// Labels and the features to be added.
+message FeatureItems {
+    uint32 num_queries = 1;
+    repeated string labels = 2;
+    repeated float feature_vector = 3;
+    string model_name = 4;
+}
+
+// Information to query k top matches of a vector.
+message IndexQuery {
+    uint32 num_queries = 1;
+    uint32 k_value = 2;
+    repeated float query_vector = 3;
+}
+
+// List of the labels to be deleted
+message LabelList {
+    repeated string labels = 1;
+}
+
+message DbSize {
+    uint32 db_size = 1;
+}
+
+message Empty {
+
+}
+
+// Status of the request
+message ReqStatus {
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+    Status status = 1;
+}
+
+// contains byte data for the DB file to be uploaded
+message FileChunk {
+    string file_name = 1;
+    bytes chunk_data = 2;
+}
+// contains byte data for the DB file to be uploaded
+message FileName {
+    string file_name = 1;
+}

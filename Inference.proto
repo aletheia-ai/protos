@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+package detections;
+
+message DetectorResults {
+  uint64 timestamp = 1;
+  string cam = 2;
+  repeated BBox bounds = 5;
+  cvMat frame = 6;
+  FrameCount count = 7;
+  CurrentFrameCount current_count = 8;
+}
+message FrameCount {
+  int32 inCount = 1;
+  int32 outCount = 2;
+}
+message CurrentFrameCount {
+  int32 enter_count = 1;
+  int32 exit_count = 2;
+}
+
+message BBox {
+  float x = 1;
+  float y = 2;
+  float width = 3;
+  float height = 4;
+  float score = 5;
+  string label = 6;
+  int32 classid = 7;
+  string classname = 8;
+  float trackid = 9;
+  Landmarks landmarks = 10;
+  floatArray features = 12;
+  Pose pose = 13;
+  // bool counting_flag = 14;
+  CountingInfo counting_info = 14;
+  float association_class_track_id = 15;
+}
+message CountingInfo {
+  bool counting_flag = 1;
+  bool crossed_line = 2;
+  bool intersect_roi = 3;  
+  CountType enter_exit_type = 4;
+  
+}
+
+message Landmarks {
+  float lefteyeX = 1;
+  float lefteyeY = 2;
+  float righteyeX = 3;
+  float righteyeY = 4;
+  float noseX = 5;
+  float noseY = 6;
+  float lipleftX = 7;
+  float lipleftY = 8;
+  float liprightX = 9;
+  float liprightY = 10;
+}
+message cvMat {
+  int32 rows = 1;
+  int32 cols = 2;
+  int32 elt_type = 3;          // element type of cv::Mat
+  int32 elt_size = 4;          // element size
+  bytes mat_data = 5;          // byte data of image
+  string memory_name = 6;
+  int32 offset = 7;
+  uint64 valid_till = 8;
+  uint64 timestamp = 9;
+  string cam_id = 10;
+}
+message Pose {
+  float yaw = 1;
+  float pitch = 2;
+  float roll = 3;
+}
+message floatArray {// each floatArray can have 512 or more values
+  repeated float values = 1; //
+}
+
+
+enum CountType {
+  UNKNOWNCT = 0;
+  ENTER = 1;
+  EXIT = 2;
+}
+enum DirectionType {
+  UNKNOWNDT = 0;
+  UPTODOWN = 1;
+  DOWNTOUP = 2;
+}
+
+enum RoiType {
+  UNKNOWNRT = 0;
+  LINE = 1;
+  REGION = 2;
+  CROP_REGION = 3;
+}
+message CountingRoi {
+  string camid = 1;
+  repeated CountingRoiData data = 2;
+}
+
+message CountingRoiData {
+
+  float x1 = 1;
+  float y1 = 2;
+  float x2 = 3;
+  float y2 = 4;
+  float x3 = 5;
+  float y3 = 6;
+  float x4 = 7;
+  float y4 = 8;
+  RoiType type = 9; // roi type i.e. line or region
+  CountType enter_exit_type = 10;
+  DirectionType direction_type = 11;
+  string label = 12;
+}
+message Attributes {
+  CountType counttype = 1; //enter/exit
+  bool lineCrossed = 2; //to run attribtues or not
+}
