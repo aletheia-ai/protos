@@ -32,9 +32,12 @@ message BBox {
   Landmarks landmarks = 10;
   floatArray features = 12;
   Pose pose = 13;
-  // bool counting_flag = 14;
   CountingInfo counting_info = 14;
   float association_class_track_id = 15;
+  bool running_human_landmarks = 16;
+  string person_crop_quality = 17;
+  floatArray human_landmarks = 18;
+
 }
 message CountingInfo {
   bool counting_flag = 1;
